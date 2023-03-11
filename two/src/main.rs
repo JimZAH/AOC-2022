@@ -9,22 +9,63 @@ enum Moves {
     Rock(u32),
     Paper(u32),
     Scissors(u32),
+    Lose,
+    Draw,
+    Win,
 }
 
 impl Moves {
+    fn play_cheat(&self, op: &Moves) -> Moves {
+        match self {
+            Moves::Lose => match op {
+                Moves::Rock(1) => Moves::Scissors(3),
+                Moves::Paper(2) => Moves::Rock(1),
+                Moves::Scissors(3) => Moves::Paper(2),
+                _ => {
+                    panic!()
+                }
+            },
+            Moves::Draw => match op {
+                Moves::Rock(1) => Moves::Rock(1),
+                Moves::Paper(2) => Moves::Paper(2),
+                Moves::Scissors(3) => Moves::Scissors(3),
+                _ => {
+                    panic!()
+                }
+            },
+            Moves::Win => match op {
+                Moves::Rock(1) => Moves::Paper(2),
+                Moves::Paper(2) => Moves::Scissors(3),
+                Moves::Scissors(3) => Moves::Rock(1),
+                _ => {
+                    panic!()
+                }
+            },
+            _ => {
+                panic!()
+            }
+        }
+    }
+
     fn play_move(&self) -> u32 {
         match self {
             Moves::Rock(v) => *v,
             Moves::Paper(v) => *v,
             Moves::Scissors(v) => *v,
+            Moves::Lose => 1,
+            Moves::Draw => 2,
+            Moves::Win => 3,
         }
     }
 
     fn save_move(c: char) -> Moves {
         match c {
-            'A' | 'X' => Moves::Rock(1),
-            'B' | 'Y' => Moves::Paper(2),
-            'C' | 'Z' => Moves::Scissors(3),
+            'A' => Moves::Rock(1),
+            'B' => Moves::Paper(2),
+            'C' => Moves::Scissors(3),
+            'X' => Moves::Lose,
+            'Y' => Moves::Draw,
+            'Z' => Moves::Win,
             _ => {
                 unreachable!()
             }
@@ -62,6 +103,9 @@ fn main() {
         }
 
         player_1_turn = true;
+
+        let play_move = play_move.play_cheat(&player_1.moves);
+
         player_2.score += play_move.play_move();
 
         if play_move == player_1.moves {
